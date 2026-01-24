@@ -1,81 +1,55 @@
 /*
- * GAME 220: Slither.io Template
- * Session 2-3: Snake Segment
+ * SnakeSegment.cs
  *
- * TEACHING FOCUS:
- * - Component communication (controller tells segment where to go)
- * - Vector3.Lerp for smooth movement
- * - FixedUpdate for consistent physics
+ * LEARNING FOCUS: Following another object
  *
- * This script makes a segment smoothly follow an assigned position.
- * The PlayerSnakeController (or AISnakeController) tells each segment
- * where it should be, and the segment smoothly moves there.
+ * Key Concepts:
+ * - Transform references to track another object
+ * - Vector3.MoveTowards for smooth, constant-speed movement
+ *
+ * Each segment stores a reference to what it should follow.
+ * The first segment follows the head, the second follows the first, etc.
  */
 
 using UnityEngine;
 
 public class SnakeSegment : MonoBehaviour
 {
-    [Header("Following Settings")]
-    // TEACHING: Higher value = faster following (more responsive but less smooth)
-    // Lower value = slower following (more smooth but more laggy)
-    public float followSpeed = 10f;
+    [Header("Following")]
+    public float followDistance = 0.3f;
+    public float moveSpeed = 20f;
 
-    // The position this segment is trying to reach
-    private Vector3 targetPosition;
+    // The Transform of whatever is in front of us
+    private Transform target;
 
-    void Start()
+    // Called once when the segment is created
+    public void SetTarget(Transform newTarget, float distance)
     {
-        // TEACHING: Initialize target to current position
-        // This prevents the segment from "jumping" on first frame
-        targetPosition = transform.position;
+        target = newTarget;
+        followDistance = distance;
     }
 
-    // TEACHING: This method is called by the snake controller each FixedUpdate
-    // It tells this segment where it should be positioned
-    public void FollowPosition(Vector3 position)
+    // Called when head wraps around screen boundary
+    public void Teleport(Vector3 offset)
     {
-        targetPosition = position;
+        transform.position += offset;
     }
 
-    // TEACHING: FixedUpdate for consistent movement timing
-    // This runs at the same time as the controller's FixedUpdate
     void FixedUpdate()
     {
-        // TEACHING: Vector3.Lerp creates smooth interpolation between two positions
-        // Lerp stands for "Linear Interpolation"
-        // Formula: Lerp(start, end, t) = start + (end - start) * t
-        // - t = 0 means stay at start
-        // - t = 1 means move to end
-        // - t = 0.5 means move halfway between
+        if (target == null) return;
 
-        // We use followSpeed * Time.fixedDeltaTime to make movement frame-rate independent
-        float lerpAmount = followSpeed * Time.fixedDeltaTime;
+        // Calculate direction to target
+        Vector3 direction = (target.position - transform.position).normalized;
 
-        transform.position = Vector3.Lerp(transform.position, targetPosition, lerpAmount);
+        // Calculate ideal position (followDistance behind target)
+        Vector3 targetPosition = target.position - direction * followDistance;
 
-        // TEACHING: Alternative approach without Lerp (more direct):
-        // Vector3 direction = targetPosition - transform.position;
-        // transform.position += direction * followSpeed * Time.fixedDeltaTime;
-    }
-
-    // ============================================
-    // VISUALIZATION (for debugging)
-    // ============================================
-
-    // TEACHING: OnDrawGizmos draws debug visualization in Unity Editor
-    // This helps us see what the segment is doing
-    void OnDrawGizmos()
-    {
-        if (Application.isPlaying)
-        {
-            // Draw a line from current position to target position
-            Gizmos.color = Color.green;
-            Gizmos.DrawLine(transform.position, targetPosition);
-
-            // Draw a small sphere at target position
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(targetPosition, 0.1f);
-        }
+        // Move toward that position at constant speed
+        transform.position = Vector3.MoveTowards(
+            transform.position,
+            targetPosition,
+            moveSpeed * Time.fixedDeltaTime
+        );
     }
 }
