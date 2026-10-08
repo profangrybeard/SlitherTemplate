@@ -31,7 +31,7 @@ Students will learn:
 - `Player/PlayerSnakeController.cs` - Lines 80-115 (GetMouseInput, MoveTowardsMouse)
 
 **Key Concepts:**
-- Input.mousePosition → Camera.ScreenToWorldPoint
+- steerAction.ReadValue<Vector2>() (Input System) → Camera.ScreenToWorldPoint
 - Update() for input (responsive)
 - FixedUpdate() for movement (consistent)
 
@@ -183,7 +183,7 @@ Students will learn:
 
 ## 🔧 Scene Setup Instructions
 
-### Required GameObjects in SampleScene:
+### Required GameObjects in SlitherTemplate_Base:
 
 1. **Main Camera** (already exists)
    - Orthographic mode

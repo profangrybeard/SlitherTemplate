@@ -14,7 +14,7 @@
 - **Materials:** 3 (Player: Green, AI: Red, Food: Yellow)
 - **Documentation Files:** 3 (README.md, SETUP_INSTRUCTIONS.md, Assets/Scripts/README.md)
 - **Implementation Time:** ~3 hours
-- **Unity Version:** 6000.0.63f1
+- **Unity Version:** 6000.6.0f1
 - **Render Pipeline:** Built-in 2D
 
 ---
@@ -95,7 +95,7 @@
 SlitherTemplate/
 ├── Assets/
 │   ├── Scenes/
-│   │   └── SampleScene.unity (existing - needs manual setup)
+│   │   └── SlitherTemplate_Base.unity
 │   ├── Scripts/
 │   │   ├── Player/
 │   │   │   ├── PlayerSnakeController.cs (270 lines)
@@ -302,7 +302,7 @@ The architecture supports future multiplayer without rewriting:
 ## 💡 Design Decisions
 
 ### Why Mouse Follow Instead of WASD?
-- Simpler input code (one line: Input.mousePosition)
+- Simpler input code (one InputAction bound to <Pointer>/position)
 - Matches original Slither.io feel
 - Focuses teaching on loops/lists, not input complexity
 - WASD input already configured in InputSystem_Actions if needed later
@@ -391,7 +391,7 @@ The architecture supports future multiplayer without rewriting:
 
 ## 🎯 Next Steps for Instructor
 
-1. **Open project in Unity 6000.0.63f1**
+1. **Open project in Unity 6000.6.0f1**
 2. **Follow SETUP_INSTRUCTIONS.md** (40 minutes)
    - Create tags
    - Build prefabs

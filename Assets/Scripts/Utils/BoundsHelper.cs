@@ -27,7 +27,7 @@
  * REGULAR CLASS (like PlayerSnakeController):
  * ─────────────────────────────────────────────
  *     // You need an instance (a specific object)
- *     PlayerSnakeController player = FindObjectOfType<PlayerSnakeController>();
+ *     PlayerSnakeController player = FindAnyObjectByType<PlayerSnakeController>();
  *     player.Grow(1);  // Call method on the instance
  *
  * STATIC CLASS (like BoundsHelper):

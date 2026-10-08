@@ -6,7 +6,7 @@ This guide walks you through setting up the Unity scene and prefabs for the Slit
 
 ## 📋 Prerequisites
 
-1. Unity 6000.0.63f1 (or compatible version)
+1. Unity 6000.6.0f1
 2. Project opened in Unity Editor
 3. All scripts are in `Assets/Scripts/` folders
 
@@ -271,7 +271,7 @@ Since this is a minimal template, we'll use Unity's built-in circle sprite:
 ### **Hierarchy Should Look Like:**
 
 ```
-SampleScene
+SlitherTemplate_Base
 ├── Main Camera
 ├── GameManager
 ├── FoodSpawner
@@ -287,7 +287,7 @@ SampleScene
 ```
 Assets/
 ├── Scenes/
-│   └── SampleScene.unity
+│   └── SlitherTemplate_Base.unity
 ├── Scripts/
 │   ├── Player/
 │   │   ├── PlayerSnakeController.cs

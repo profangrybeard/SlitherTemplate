@@ -15,9 +15,17 @@
 
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerSnakeController : MonoBehaviour
 {
+    // An InputAction is a NAME for something the player can do ("Steer"),
+    // separate from what triggers it (the mouse, a touchscreen, a gamepad).
+    // Those triggers are called BINDINGS. Expand this in the Inspector to see them.
+    [Header("Input")]
+    [SerializeField] private InputAction steerAction =
+        new InputAction("Steer", InputActionType.Value, "<Pointer>/position", expectedControlType: "Vector2");
+
     [Header("Movement")]
     public float moveSpeed = 5f;
     public float rotationSpeed = 200f;
@@ -40,14 +48,27 @@ public class PlayerSnakeController : MonoBehaviour
         CreateStartingBody();
     }
 
+    // An action does nothing until it is enabled. OnEnable (not Start) runs
+    // every time this object is switched on, so input always comes back.
+    void OnEnable()
+    {
+        steerAction.Enable();
+    }
+
+    void OnDisable()
+    {
+        steerAction.Disable();
+    }
+
     void Update()
     {
         if (!isAlive) return;
 
-        // Get mouse position and calculate direction
-        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        mousePos.z = 0;
-        moveDirection = (mousePos - transform.position).normalized;
+        // Get pointer position and calculate direction
+        Vector2 pointerScreenPos = steerAction.ReadValue<Vector2>();
+        Vector3 pointerWorldPos = Camera.main.ScreenToWorldPoint(pointerScreenPos);
+        pointerWorldPos.z = 0;
+        moveDirection = (pointerWorldPos - transform.position).normalized;
     }
 
     void FixedUpdate()

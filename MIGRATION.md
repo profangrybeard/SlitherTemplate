@@ -6,9 +6,15 @@ been through this migration and tested in-editor.
 Full playbook (both templates, side by side):
 https://claude.ai/code/artifact/3480539e-c224-4a43-a2ff-c683f936ab6b
 
+> **Status (8 Oct 2026): done, on Unity 6000.6.0f1.** Input is New-only with
+> `steerAction` / `restartAction`, TMP `Examples & Extras` and the empty `SampleScene` are
+> removed, Build Settings points at `SlitherTemplate_Base.unity`, and the project opens
+> with zero console warnings. Stayed on Built-In rendering. The notes below are the
+> original plan, kept for reference.
+
 ---
 
-## Where this project stands
+## Where this project stood (before the migration)
 
 Read from disk, 25 Aug 2026.
 

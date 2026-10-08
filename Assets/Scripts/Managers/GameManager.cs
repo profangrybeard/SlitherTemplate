@@ -104,6 +104,7 @@
 
 using System.Collections.Generic;  // Required for List<T>
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
@@ -111,6 +112,10 @@ public class GameManager : MonoBehaviour
     // ╔═══════════════════════════════════════════════════════════════════════════════╗
     // ║  INSPECTOR SETTINGS                                                           ║
     // ╚═══════════════════════════════════════════════════════════════════════════════╝
+
+    [Header("Input")]
+    [SerializeField] private InputAction restartAction =
+        new InputAction("Restart", InputActionType.Button, "<Keyboard>/r");
 
     [Header("AI Settings")]
     public GameObject aiSnakePrefab;
@@ -145,7 +150,7 @@ public class GameManager : MonoBehaviour
      * 2. We can count how many exist: aiSnakes.Count
      * 3. Other scripts might need to know about all AI snakes
      *
-     * Without this list, we'd have to use FindObjectsOfType<AISnakeController>()
+     * Without this list, we'd have to use FindObjectsByType<AISnakeController>()
      * every time we need to check all AI snakes - that's slow!
      */
     private List<AISnakeController> aiSnakes = new List<AISnakeController>();
@@ -176,10 +181,21 @@ public class GameManager : MonoBehaviour
     // ║  UPDATE - Check for restart input                                             ║
     // ╚═══════════════════════════════════════════════════════════════════════════════╝
 
+    // Input actions must be enabled before they report anything
+    void OnEnable()
+    {
+        restartAction.Enable();
+    }
+
+    void OnDisable()
+    {
+        restartAction.Disable();
+    }
+
     void Update()
     {
         // Only check for restart if game is over
-        if (gameOver && Input.GetKeyDown(KeyCode.R))
+        if (gameOver && restartAction.WasPressedThisFrame())
         {
             RestartGame();
         }

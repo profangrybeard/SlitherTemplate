@@ -94,7 +94,7 @@ public class FoodSpawner : MonoBehaviour
             }
         }
 
-        AISnakeController[] aiSnakes = FindObjectsByType<AISnakeController>(FindObjectsSortMode.None);
+        AISnakeController[] aiSnakes = FindObjectsByType<AISnakeController>();
         foreach (AISnakeController ai in aiSnakes)
         {
             if (Vector3.Distance(position, ai.transform.position) < minDistanceFromSnakes)

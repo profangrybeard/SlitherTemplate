@@ -10,7 +10,7 @@ A comprehensive Unity 2D educational template teaching programming fundamentals 
 
 **Duration:** 3 weeks (6 class sessions)
 **Dates:** February 4 - February 16
-**Unity Version:** 6000.0.63f1
+**Unity Version:** 6000.6.0f1
 **Renderer:** Built-in 2D
 **Skill Level:** First-time programmers learning core concepts
 
@@ -57,7 +57,7 @@ A comprehensive Unity 2D educational template teaching programming fundamentals 
 
 ### 1. Setup (One-time)
 ```bash
-# Clone and open in Unity 6000.0.63f1
+# Clone and open in Unity 6000.6.0f1
 git clone [your-repo-url]
 cd SlitherTemplate
 # Open project in Unity Hub
@@ -86,7 +86,7 @@ Press **Play** in Unity. You should see:
 ```
 Assets/
 ├── Scenes/
-│   └── SampleScene.unity           # Main game scene
+│   └── SlitherTemplate_Base.unity  # Main game scene
 ├── Scripts/
 │   ├── Player/
 │   │   ├── PlayerSnakeController.cs   # Mouse input, movement, collision

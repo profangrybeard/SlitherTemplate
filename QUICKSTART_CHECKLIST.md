@@ -6,7 +6,7 @@ Use this checklist to set up the template in Unity. Estimated time: 40 minutes.
 
 ## ✅ Pre-Setup Verification
 
-- [ ] Unity 6000.0.63f1 (or compatible) installed
+- [ ] Unity 6000.6.0f1 installed
 - [ ] Project opened in Unity Editor
 - [ ] All Assets/Scripts folders visible in Project window
 - [ ] 8 C# scripts compile without errors
