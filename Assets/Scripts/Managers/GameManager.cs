@@ -1,8 +1,10 @@
 /*
  * GAME 220: Slither Template -- GameManager
  * Spawns the AI snakes, tracks them in a List, and handles game over, victory, and restart.
- * Concepts: LOOPS_AND_LISTS_CONCEPTS.md section 7 -- for loop spawning, foreach + Clear() cleanup
+ * Compare it with FoodSpawner: a for loop fills a List, List.Remove() takes one out,
+ * and at game over a foreach loop plus Clear() empties it.
  *
+ * Read alongside: LOOPS_AND_LISTS_CONCEPTS.md section 7
  * Session 5: read GameOver() and RestartGame()   Session 6: read SpawnAISnakes()
  */
 
@@ -13,35 +15,44 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    // ---------- Inspector settings ----------
+    // ─────────────────────────────────────────────────────────────────────────
+    // INPUT - Same InputAction pattern as PlayerSnakeController's steerAction
+    // ─────────────────────────────────────────────────────────────────────────
 
     [Header("Input")]
     [SerializeField] private InputAction restartAction =
         new InputAction("Restart", InputActionType.Button, "<Keyboard>/r");
 
+    // ─────────────────────────────────────────────────────────────────────────
+    // SETTINGS - Tweak these in the Inspector
+    // ─────────────────────────────────────────────────────────────────────────
+
     [Header("AI Settings")]
-    public GameObject aiSnakePrefab;
+    public GameObject aiSnakePrefab;             // Drag AISnake.prefab here
 
     // TRY IT: set to 0, 10, then 20 (see section 9)
     public int numberOfAISnakes = 3;
 
+    // These only draw the cyan box below. Which method really picks where an AI spawns?
     [Header("Spawn Settings")]
     public Vector2 spawnAreaMin = new Vector2(-20, -15);
     public Vector2 spawnAreaMax = new Vector2(20, 15);
 
-    // ---------- State ----------
+    // ─────────────────────────────────────────────────────────────────────────
+    // STATE - Tracked while playing
+    // ─────────────────────────────────────────────────────────────────────────
 
     private List<AISnakeController> aiSnakes = new List<AISnakeController>(); // Every live AI snake
 
     private bool gameOver = false;               // Once true, only restart input is accepted
 
-    // ---------- Unity lifecycle ----------
+    // ─────────────────────────────────────────────────────────────────────────
+    // UNITY MESSAGES - Unity calls these automatically
+    // ─────────────────────────────────────────────────────────────────────────
 
     void Start()
     {
         Debug.Log("Game started!");
-
-        // Spawn all AI snakes using a FOR loop
         SpawnAISnakes();
     }
 
@@ -58,19 +69,21 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        // Only check for restart if game is over
+        // Why does R only work after game over? What would change without the gameOver part?
         if (gameOver && restartAction.WasPressedThisFrame())
         {
             RestartGame();
         }
     }
 
-    // ---------- FOR loop: spawning AI ----------
+    // ─────────────────────────────────────────────────────────────────────────
+    // SPAWNING - A for loop fills the List (Session 6)
+    // ─────────────────────────────────────────────────────────────────────────
 
     // Runs SpawnSingleAISnake() numberOfAISnakes times
     void SpawnAISnakes()
     {
-        for (int i = 0; i < numberOfAISnakes; i++)
+        for (int i = 0; i < numberOfAISnakes; i++)                    // [LOOP]
         {
             SpawnSingleAISnake();
         }
@@ -78,16 +91,11 @@ public class GameManager : MonoBehaviour
         Debug.Log($"Spawned {aiSnakes.Count} AI snakes");
     }
 
-    // Creates one AI snake and adds it to the list
+    // Creates one AI snake and adds it to the List
     void SpawnSingleAISnake()
     {
-        // Get a random position for this AI
         Vector3 spawnPosition = GetRandomSpawnPosition();
-
-        // Create the AI snake
         GameObject aiObj = Instantiate(aiSnakePrefab, spawnPosition, Quaternion.identity);
-
-        // Get the AISnakeController component
         AISnakeController ai = aiObj.GetComponent<AISnakeController>();
 
         if (ai != null)
@@ -96,25 +104,30 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    // BoundsHelper keeps the spawn inside the play area
     Vector3 GetRandomSpawnPosition()
     {
-        // Use BoundsHelper to guarantee spawn is inside game bounds
         return BoundsHelper.GetRandomPosition();
     }
 
-    // ---------- FOREACH + Clear(): game over cleanup ----------
+    // ─────────────────────────────────────────────────────────────────────────
+    // GAME OVER - foreach + Clear() empties the List (Session 5)
+    // ─────────────────────────────────────────────────────────────────────────
+    // DESTROY vs CLEAR: they do different jobs, and you need both.
+    //   Destroy(ai.gameObject)   removes the snake from the game world
+    //   aiSnakes.Clear()         removes every entry from the List
+    // Destroy() doesn't touch the List, and Clear() doesn't touch the game world.
 
-    // Called when the player dies. Destroy every AI, then empty the list (you need both).
+    // Called by PlayerSnakeController.Die()
     public void GameOver()
     {
-        // Prevent multiple calls (e.g., if player hits two things at once)
+        // Why stop here if gameOver is already true? (Hint: what if the player hits two things at once?)
         if (gameOver) return;
 
         gameOver = true;
         Debug.Log("GAME OVER! Press R to restart");
 
-        // Step 1: Destroy removes each snake from the game world
-        foreach (AISnakeController ai in aiSnakes)
+        foreach (AISnakeController ai in aiSnakes)                    // [LOOP]
         {
             if (ai != null)                      // Some may already be destroyed
             {
@@ -122,10 +135,9 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        // Step 2: the list still holds the destroyed entries, so empty it
+        // Comment out Clear() and log aiSnakes.Count after it. Why isn't the List empty?
         aiSnakes.Clear();
 
-        // Show game over UI
         ScoreManager scoreManager = FindAnyObjectByType<ScoreManager>();
         if (scoreManager != null)
         {
@@ -133,46 +145,50 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // ---------- Restart ----------
+    // ─────────────────────────────────────────────────────────────────────────
+    // RESTART
+    // ─────────────────────────────────────────────────────────────────────────
 
-    // Reloading the scene resets the player, score, and every list
+    // Reloading the scene resets the player, score, and every List. The high score survives because PlayerPrefs saves it to disk.
     void RestartGame()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
-    // ---------- AI tracking ----------
+    // ─────────────────────────────────────────────────────────────────────────
+    // AI TRACKING - AI snakes report back here
+    // ─────────────────────────────────────────────────────────────────────────
 
     public int GetAISnakeCount()
     {
         return aiSnakes.Count;
     }
 
-    // Called by an AI snake when it dies. Keeps the list in sync and checks for a win.
+    // Called by AISnakeController.Die(). Keeps the List in sync and checks for a win.
     public void OnAISnakeDied(AISnakeController ai)
     {
-        // Don't process if game is already over
-        if (gameOver) return;
+        if (gameOver) return;                    // The game already ended, so don't count it
 
         aiSnakes.Remove(ai);                     // List.Remove(): removes just this one
 
         Debug.Log($"AI snake eliminated! Remaining: {aiSnakes.Count}");
 
-        // WIN CONDITION: Check if all AI snakes are dead
+        // Why check for the win right after Remove(), instead of every frame in Update()?
         if (aiSnakes.Count == 0)
         {
             Victory();
         }
     }
 
-    // ---------- Victory ----------
+    // ─────────────────────────────────────────────────────────────────────────
+    // VICTORY
+    // ─────────────────────────────────────────────────────────────────────────
 
     void Victory()
     {
         gameOver = true;
         Debug.Log("VICTORY! All AI snakes eliminated!");
 
-        // Show victory UI
         ScoreManager scoreManager = FindAnyObjectByType<ScoreManager>();
         if (scoreManager != null)
         {
@@ -186,11 +202,13 @@ public class GameManager : MonoBehaviour
         OnAISnakeDied(ai);
     }
 
-    // ---------- Debugging ----------
+    // ─────────────────────────────────────────────────────────────────────────
+    // DEBUGGING - Draws in the Scene view only
+    // ─────────────────────────────────────────────────────────────────────────
 
+    // Cyan box = spawnAreaMin/Max. Compare it with FoodSpawner's green box.
     void OnDrawGizmos()
     {
-        // Draw the spawn area as a cyan rectangle
         Gizmos.color = Color.cyan;
 
         Vector3 center = new Vector3(

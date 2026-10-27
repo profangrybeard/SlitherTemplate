@@ -1,8 +1,9 @@
 /*
  * GAME 220: Slither Template -- ScoreManager
  * The one place the score lives: tracks it, updates the UI, saves the high score, shows end messages.
- * Concepts: LOOPS_AND_LISTS_CONCEPTS.md section 5 -- UI hookup, encapsulation, PlayerPrefs
+ * Other scripts can ask for the score or add to it, but they can't set it directly.
  *
+ * Read alongside: LOOPS_AND_LISTS_CONCEPTS.md section 5
  * Session 4: read AddScore() and connect the UI text fields in the Inspector
  */
 
@@ -11,48 +12,54 @@ using TMPro; // Required for TextMeshPro UI components
 
 public class ScoreManager : MonoBehaviour
 {
-    // ---------- UI references (drag from the Hierarchy) ----------
+    // ─────────────────────────────────────────────────────────────────────────
+    // REFERENCES - Drag these in from the Hierarchy
+    // ─────────────────────────────────────────────────────────────────────────
 
     [Header("UI References")]
     public TMP_Text scoreText;      // Displays current score during gameplay
     public TMP_Text gameOverText;   // Displays game over message
 
-    // ---------- Score data ----------
+    // ─────────────────────────────────────────────────────────────────────────
+    // STATE - The score itself
+    // ─────────────────────────────────────────────────────────────────────────
+    // ENCAPSULATION: the score is private, so the only way to change it from outside is
+    // AddScore(). That method also updates the UI and the high score, so they can't be forgotten.
+    //   scoreManager.AddScore(10);        works from any script
+    //   scoreManager.currentScore = 999;  compile error: currentScore is private
 
+    // This Header never shows up in the Inspector. Why not?
     [Header("Score Settings")]
-    // Private so other scripts must go through AddScore()
     private int currentScore = 0;                // This game only
     private int highScore = 0;                   // Best ever, saved with PlayerPrefs
 
-    // ---------- Unity lifecycle ----------
+    // ─────────────────────────────────────────────────────────────────────────
+    // UNITY MESSAGES - Unity calls these automatically
+    // ─────────────────────────────────────────────────────────────────────────
 
     void Start()
     {
         highScore = PlayerPrefs.GetInt("HighScore", 0); // 0 if nothing is saved yet
 
-        // Set initial display
         UpdateScoreDisplay();
 
-        // Hide game over text at start
         if (gameOverText != null)
         {
-            // SetActive(false) makes the GameObject invisible and inactive
-            gameOverText.gameObject.SetActive(false);
+            gameOverText.gameObject.SetActive(false);   // Hidden until the game ends
         }
     }
 
-    // ---------- Score ----------
+    // ─────────────────────────────────────────────────────────────────────────
+    // SCORE
+    // ─────────────────────────────────────────────────────────────────────────
 
     // The only way to change the score from outside, so the UI and high score always update
     public void AddScore(int points)
     {
-        // Add points to current score
         currentScore += points;
-
-        // Update the UI to show new score
         UpdateScoreDisplay();
 
-        // Check if this is a new high score
+        // Why save highScore with PlayerPrefs, but never currentScore?
         if (currentScore > highScore)
         {
             highScore = currentScore;
@@ -65,21 +72,22 @@ public class ScoreManager : MonoBehaviour
     // Private helper: keeps the UI in sync with the score
     void UpdateScoreDisplay()
     {
-        // Only update if we have a reference to the text
+        // Why check for null? Clear Score Text in the Inspector and press Play. What happens?
         if (scoreText != null)
         {
             scoreText.text = "Score: " + currentScore.ToString(); // Same as $"Score: {currentScore}"
         }
     }
 
-    // ---------- End-of-game messages ----------
+    // ─────────────────────────────────────────────────────────────────────────
+    // END-OF-GAME MESSAGES
+    // ─────────────────────────────────────────────────────────────────────────
 
-    // Called by GameManager when the player dies
+    // Called by GameManager.GameOver() when the player dies
     public void ShowGameOver()
     {
         if (gameOverText != null)
         {
-            // Make the text visible
             gameOverText.gameObject.SetActive(true);
 
             // $"" fills in {variables}; \n starts a new line
@@ -87,7 +95,7 @@ public class ScoreManager : MonoBehaviour
         }
     }
 
-    // Called by GameManager when all AI snakes are eliminated
+    // Called by GameManager.Victory() when all AI snakes are eliminated
     public void ShowVictory()
     {
         if (gameOverText != null)
@@ -97,7 +105,14 @@ public class ScoreManager : MonoBehaviour
         }
     }
 
-    // ---------- Getters (read the score, can't change it) ----------
+    // ─────────────────────────────────────────────────────────────────────────
+    // GETTERS - Read the score, but can't change it
+    // ─────────────────────────────────────────────────────────────────────────
+    // RETURN VALUES: these methods hand a value BACK to whoever called them.
+    //   The type before the name (int) is what comes back.
+    //   `return` sends it back and ends the method.
+    //       int score = scoreManager.GetCurrentScore();    // score now holds the current score
+    //   A `void` method (like AddScore) does something but hands nothing back.
 
     public int GetCurrentScore()
     {

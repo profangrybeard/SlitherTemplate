@@ -1,8 +1,9 @@
 /*
  * GAME 220: Slither Template -- FoodSpawner
- * Keeps the arena stocked: List.Add() on spawn, List.Remove() on collect, a while loop to find a safe spot.
- * Concepts: LOOPS_AND_LISTS_CONCEPTS.md section 3 -- List add/remove lifecycle, for and while loops
+ * Keeps the arena stocked: List.Add() on spawn, List.Remove() on collect, and a while
+ * loop to find a spot that isn't right on top of a snake.
  *
+ * Read alongside: LOOPS_AND_LISTS_CONCEPTS.md section 3
  * Session 4: read Start(), OnFoodCollected(), and GetRandomValidPosition()
  */
 
@@ -11,26 +12,44 @@ using UnityEngine;
 
 public class FoodSpawner : MonoBehaviour
 {
+    // ─────────────────────────────────────────────────────────────────────────
+    // SETTINGS - Tweak these in the Inspector
+    // ─────────────────────────────────────────────────────────────────────────
+
     [Header("Spawn Settings")]
-    public GameObject foodPrefab;
+    public GameObject foodPrefab;                // Drag FoodPellet.prefab here
     public int initialFoodCount = 20;
 
     [Header("Validation")]
-    public float minDistanceFromSnakes = 2f;
-    public int maxSpawnAttempts = 10;
+    public float minDistanceFromSnakes = 2f;     // Too close to a snake head = try again
+    public int maxSpawnAttempts = 10;            // The while loop gives up after this many tries
 
-    // Tracks all active food in the game
-    private List<FoodPellet> activeFoodPellets = new List<FoodPellet>();
+    // ─────────────────────────────────────────────────────────────────────────
+    // STATE - Tracked while playing
+    // ─────────────────────────────────────────────────────────────────────────
+    // THE LIST LIFECYCLE: every pellet goes through the same three steps.
+    //   SpawnFood()          Instantiate it, then activeFoodPellets.Add(pellet)
+    //   OnFoodCollected()    activeFoodPellets.Remove(pellet), then Destroy it
+    //   then SpawnFood() again, so activeFoodPellets.Count stays the same
+
+    private List<FoodPellet> activeFoodPellets = new List<FoodPellet>(); // Every pellet in the arena
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // UNITY MESSAGES - Unity calls these automatically
+    // ─────────────────────────────────────────────────────────────────────────
 
     void Start()
     {
-        // FOR LOOP: Spawn initial batch of food
-        for (int i = 0; i < initialFoodCount; i++)
+        for (int i = 0; i < initialFoodCount; i++)                    // [LOOP]
         {
             SpawnFood();
         }
         Debug.Log($"Spawned {activeFoodPellets.Count} food pellets");
     }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // PUBLIC METHODS - Other scripts call these
+    // ─────────────────────────────────────────────────────────────────────────
 
     public void SpawnFood()
     {
@@ -40,50 +59,38 @@ public class FoodSpawner : MonoBehaviour
 
         if (pellet != null)
         {
-            // List.Add() - track this food
-            activeFoodPellets.Add(pellet);
+            activeFoodPellets.Add(pellet);                            // Start tracking this food
             pellet.SetSpawner(this);
-            pellet.SetFoodType(GetRandomFoodType());
         }
     }
 
-    private FoodType GetRandomFoodType()
-    {
-        // Randomly select a food type based on desired probabilities
-        float randomValue = Random.value;
-
-        if (randomValue < 0.7f)
-        {
-            return FoodType.Normal; // 70% chance
-        }
-        else if (randomValue < 0.9f)
-        {
-            return FoodType.Super; // 20% chance
-        }
-        else
-        {
-            return FoodType.Poison; // 10% chance
-        }
-    }
-
-    // Called by FoodPellet when collected
+    // Called by FoodPellet when a snake eats it
     public void OnFoodCollected(FoodPellet pellet)
     {
-        // List.Remove() - stop tracking this food
+        // Why remove it from the List before destroying it?
         activeFoodPellets.Remove(pellet);
         Destroy(pellet.gameObject);
 
-        // Spawn replacement to keep count constant
-        SpawnFood();
+        SpawnFood();                             // Replace it, so the count stays the same
     }
 
-    // WHILE LOOP: Keep trying until we find a valid position
+    // ─────────────────────────────────────────────────────────────────────────
+    // PRIVATE METHODS - Picking a spot
+    // ─────────────────────────────────────────────────────────────────────────
+
+    // WHILE LOOPS: repeat as long as a condition is true, when you DON'T know how many
+    // passes it will take. Here: keep picking random spots until one is valid.
+    //   while (attempts < maxSpawnAttempts) { ...try a spot...  attempts++; }
+    // `return` inside the loop ends the whole method, so the loop stops early on success.
+
+    // Start() uses a for loop. Why is a while loop the better fit here?
     Vector3 GetRandomValidPosition()
     {
         Vector3 position = Vector3.zero;
         int attempts = 0;
 
-        while (attempts < maxSpawnAttempts)
+        // Why cap the loop at maxSpawnAttempts? What could happen if no spot were ever valid?
+        while (attempts < maxSpawnAttempts)                           // [LOOP]
         {
             position = BoundsHelper.GetRandomPosition();
 
@@ -95,10 +102,11 @@ public class FoodSpawner : MonoBehaviour
         }
 
         Debug.LogWarning($"Could not find valid spawn position after {maxSpawnAttempts} attempts");
-        return position;
+        return position;                         // Use the last try anyway
     }
 
-    // FOREACH: Check distance from all snakes
+    // ARRAYS vs LISTS: FindObjectsByType hands back an ARRAY (fixed size, AISnakeController[]).
+    // Here we only read it, never add to it, so an array is fine. foreach works on both.
     bool IsPositionValid(Vector3 position)
     {
         PlayerSnakeController player = FindAnyObjectByType<PlayerSnakeController>();
@@ -111,7 +119,7 @@ public class FoodSpawner : MonoBehaviour
         }
 
         AISnakeController[] aiSnakes = FindObjectsByType<AISnakeController>();
-        foreach (AISnakeController ai in aiSnakes)
+        foreach (AISnakeController ai in aiSnakes)                    // [LOOP]
         {
             if (Vector3.Distance(position, ai.transform.position) < minDistanceFromSnakes)
             {
@@ -122,6 +130,11 @@ public class FoodSpawner : MonoBehaviour
         return true;
     }
 
+    // ─────────────────────────────────────────────────────────────────────────
+    // DEBUGGING - Draws in the Scene view only
+    // ─────────────────────────────────────────────────────────────────────────
+
+    // Green box = the play bounds from BoundsHelper, where food and AI snakes spawn
     void OnDrawGizmos()
     {
         Gizmos.color = Color.green;

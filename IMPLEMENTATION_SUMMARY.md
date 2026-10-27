@@ -9,7 +9,7 @@
 ## 📊 Project Statistics
 
 - **Total Scripts:** 8 C# files
-- **Total Lines:** about 1,230 across the 8 scripts (short one-line comments; explanations live in `LOOPS_AND_LISTS_CONCEPTS.md`)
+- **Total Lines:** about 1,320 across the 8 scripts (about 27% comments in the instructional style; long explanations live in `LOOPS_AND_LISTS_CONCEPTS.md`)
 - **Prefabs:** 3 (SnakeSegment, FoodPellet, AISnake)
 - **Materials:** 3 (Player: Green, AI: Red, Food: Yellow), not used by the prefabs; colors are set on each Sprite Renderer (player green, AI orange, food white)
 - **Documentation Files:** 4 (README.md, SETUP_INSTRUCTIONS.md, Assets/Scripts/README.md, LOOPS_AND_LISTS_CONCEPTS.md)
@@ -126,18 +126,28 @@ SlitherTemplate/
 
 ### Teaching Comment Conventions
 
-Trimmed in Oct 2026. Last quarter students had trouble finding the code because long
-TEACHING blocks split it up, and four scripts were 65-75% comments. The rule now (same as
-WatermelonTemplate): **the script shows the code, and `LOOPS_AND_LISTS_CONCEPTS.md` explains it.**
+Reworked in Oct 2026, twice. The original long TEACHING blocks split the code so badly that
+students couldn't find it (four scripts were 65-75% comments). A one-line-only trim then left
+nothing to read or react to (about 15%). The scripts now use the same middle ground as
+PeggleTemplate and WatermelonTemplate: **about 20-30% comments, the code easy to find, and
+something in every file to think about.** The long explanations stay in `LOOPS_AND_LISTS_CONCEPTS.md`.
 
-1. **File headers:** 3-6 lines. What the file does, which concept it shows, which
-   `LOOPS_AND_LISTS_CONCEPTS.md` section explains it, and the session tasks.
-2. **One line per comment.** Comments are a short line above a method or at the end of a line.
-   There are no multi-line blocks inside a class.
-3. **Section dividers:** `// ---------- Name ----------` so students can scan for sections.
-4. **`// TRY IT:` markers:** one line where a student experiment starts. The steps are in section 9 of the concepts doc.
-5. **`[Header()]` / `[Tooltip()]`:** stay on Inspector fields, so the Inspector explains itself.
-6. **No XML `<summary>` blocks.** Method names carry the meaning, and a one-line comment covers the rest.
+1. **File headers:** what the file does, which `LOOPS_AND_LISTS_CONCEPTS.md` section goes
+   with it, and the session tasks. `PlayerSnakeController.cs` also carries a project map
+   showing how the scripts fit together.
+2. **Labeled sections** with a band, in the same order in every file where they apply:
+   `INPUT`, `SETTINGS`, `STATE`, `UNITY MESSAGES`, `PUBLIC METHODS`, then the file's own
+   sections (`BODY LIST - Sessions 2-3`, `GAME OVER`...).
+3. **Short concept reviews** (3-8 lines) under a band, once each where students first meet the
+   concept: Lists, `for`, `foreach`, `while`, InputActions, Update vs FixedUpdate, timers,
+   triggers, `switch`, enums, encapsulation, return values, static, Destroy vs Clear, arrays vs Lists.
+4. **`// Why...?` questions:** 1-6 per script (32 in all), one line, right above the line they
+   ask about. The AI tutor is told never to answer them.
+5. **`// [LOOP]` tags** at the end of every `for`, `foreach`, and `while` line (14 in all,
+   matching the loop table above).
+6. **`// TRY IT:` markers:** one line where a student experiment starts. The steps are in section 9 of the concepts doc.
+7. **`[Header()]`:** stays on Inspector fields, so the Inspector explains itself.
+8. **No XML `<summary>` blocks**, and comments never sit between the lines of one statement.
 
 ### Code Pattern Examples:
 - Update vs FixedUpdate separation
@@ -257,7 +267,7 @@ After Unity setup, test:
 
 ### For Students:
 1. **README.md** - Getting started guide with extension ideas
-2. **Inline comments** - short one-line pointers; each script's header names its concepts section
+2. **Inline comments** - labeled sections, short concept reviews, and `// Why...?` questions; each script's header names its concepts section
 3. **LOOPS_AND_LISTS_CONCEPTS.md** - the WHY and HOW: diagrams, loop traces, and TRY IT experiments
 4. **Code patterns** - Reusable patterns clearly demonstrated
 
@@ -363,25 +373,25 @@ The architecture supports future multiplayer without rewriting:
 ## 📊 Code Metrics
 
 ### By Script:
-| Script | Lines | Comments | Code | Ratio |
-|--------|-------|----------|------|-------|
-| PlayerSnakeController | 225 | 27 | 163 | 12% comments |
-| AISnakeController | 204 | 14 | 155 | 7% comments |
-| FoodSpawner | 132 | 16 | 97 | 12% comments |
-| SnakeSegment | 50 | 13 | 28 | 26% comments |
-| GameManager | 210 | 38 | 126 | 18% comments |
-| ScoreManager | 118 | 28 | 67 | 24% comments |
-| FoodPellet | 145 | 26 | 95 | 18% comments |
-| BoundsHelper | 142 | 31 | 88 | 22% comments |
+| Script | Lines | Comments | Code | Ratio | Why questions |
+|--------|-------|----------|------|-------|---------------|
+| PlayerSnakeController | 260 | 75 | 148 | 29% comments | 7 |
+| AISnakeController | 231 | 40 | 155 | 17% comments | 5 |
+| FoodSpawner | 145 | 41 | 80 | 28% comments | 3 |
+| SnakeSegment | 64 | 24 | 28 | 38% comments | 2 |
+| GameManager | 228 | 58 | 126 | 25% comments | 4 |
+| ScoreManager | 133 | 44 | 67 | 33% comments | 3 |
+| FoodPellet | 111 | 35 | 58 | 32% comments | 2 |
+| BoundsHelper | 149 | 40 | 88 | 27% comments | 2 |
 
-**Total:** about 15% of lines are comments (down from about 55% before the Oct 2026 trim; the rest are blank lines).
+**Total:** about 27% of lines are comments (about 55% before the Oct 2026 rework, 15% after the first trim; the rest are blank lines). The smallest file (SnakeSegment) runs higher because a header and a band are a big share of a short file. AISnakeController runs lower on purpose: it repeats PlayerSnakeController, so it points back instead of explaining again.
 Counts are from Oct 2026 and will drift as the code changes.
 
 ---
 
 ## ✅ Deliverables Complete
 
-- ✅ 8 C# scripts with short pointer comments
+- ✅ 8 C# scripts in the instructional comment style (sections, short reviews, Why questions)
 - ✅ Concepts reference (LOOPS_AND_LISTS_CONCEPTS.md)
 - ✅ 3 material files (color-coded, not yet assigned to the prefabs)
 - ✅ Complete folder structure

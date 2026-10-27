@@ -386,6 +386,8 @@ Once everything is working, explore these files in order:
 
 Each script's header names a section of `LOOPS_AND_LISTS_CONCEPTS.md` - that's where the WHY and HOW are.
 
+To use the AI tutor in VS Code, follow [AI_TUTOR.md](AI_TUTOR.md). It helps with hints and questions, not finished code.
+
 ---
 
 ## 🚀 Next Steps

@@ -1,24 +1,28 @@
 /*
  * GAME 220: Slither Template -- FoodPellet
- * One food item. When a snake touches it, the snake grows, the player scores, and the spawner replaces it.
- * Concepts: LOOPS_AND_LISTS_CONCEPTS.md section 4 -- triggers, CompareTag, component communication
+ * One food item. When a snake touches it, the snake grows, the player scores, and the
+ * spawner replaces it.
  *
+ * Read alongside: LOOPS_AND_LISTS_CONCEPTS.md section 4
  * Session 4: read OnTriggerEnter2D, then try the growthAmount experiment (section 9)
+ * Summative: new food types (like one worth 50 points) start here.
  */
 
-using System;
 using UnityEngine;
 
 public class FoodPellet : MonoBehaviour
 {
-    // ---------- Settings ----------
+    // ─────────────────────────────────────────────────────────────────────────
+    // SETTINGS - Tweak these on the FoodPellet prefab
+    // ─────────────────────────────────────────────────────────────────────────
 
     [Header("Pellet Settings")]
-    // TRY IT: set growthAmount to 5, then 0 (see section 9)
+    // TRY IT: set growthAmount to 5, then 0, and watch what happens when you eat (see section 9)
     public int growthAmount = 1;                 // Segments a snake gains from this food
-    [SerializeField] private FoodType foodType = FoodType.Normal;
 
-    // ---------- References ----------
+    // ─────────────────────────────────────────────────────────────────────────
+    // REFERENCES - Set by code, not in the Inspector
+    // ─────────────────────────────────────────────────────────────────────────
 
     private FoodSpawner spawner;                 // The spawner that made us, so we can report back
 
@@ -28,9 +32,15 @@ public class FoodPellet : MonoBehaviour
         spawner = foodSpawner;
     }
 
-    // ---------- Collision ----------
+    // ─────────────────────────────────────────────────────────────────────────
+    // COLLISION
+    // ─────────────────────────────────────────────────────────────────────────
+    // TRIGGERS: OnTriggerEnter2D runs once, on the frame two colliders start to overlap.
+    //   It needs a Collider2D on both objects, Is Trigger on at least one,
+    //   and a Rigidbody2D on at least one. (The snake heads have the Rigidbody2D.)
+    // GetComponent<T>() looks for a script on the object we touched. It returns null
+    // if that object doesn't have one, so check before you use it.
 
-    // Needs a Collider2D on both objects, Is Trigger on one, and a Rigidbody2D on one
     void OnTriggerEnter2D(Collider2D other)
     {
         // Player snake: grow, score, and tell the spawner
@@ -40,10 +50,10 @@ public class FoodPellet : MonoBehaviour
 
             if (player != null)
             {
+                player.Grow(growthAmount);
 
-                player.EatFood(foodType);  //this now handles eating but doesn't tell the controller what to do
-
-                // Spawner removes us from its list, destroys us, and spawns a replacement
+                // Spawner removes us from its list, destroys us, and spawns a replacement.
+                // Why hand that to the spawner instead of calling Destroy(gameObject) here?
                 if (spawner != null)
                 {
                     spawner.OnFoodCollected(this);
@@ -53,8 +63,8 @@ public class FoodPellet : MonoBehaviour
                     Destroy(gameObject);         // No spawner (placed by hand): clean up ourselves
                 }
 
-                // FindAnyObjectByType is slower than a cached reference, but simpler to read
-                ScoreManager scoreManager = FindAnyObjectByType<ScoreManager>();
+                // Every pellet is worth 10 here. Where would a food worth 50 need to change?
+                ScoreManager scoreManager = FindAnyObjectByType<ScoreManager>(); // Slower than a saved reference, but simpler to read
                 if (scoreManager != null)
                 {
                     scoreManager.AddScore(10);
@@ -83,7 +93,9 @@ public class FoodPellet : MonoBehaviour
         }
     }
 
-    // ---------- Visual effect ----------
+    // ─────────────────────────────────────────────────────────────────────────
+    // VISUAL EFFECT
+    // ─────────────────────────────────────────────────────────────────────────
 
     // Bobbing is visual only, so it runs in Update for the smoothest motion
     void Update()
@@ -91,55 +103,9 @@ public class FoodPellet : MonoBehaviour
         float bobAmount = 0.1f;    // How far up/down to bob
         float bobSpeed = 2f;       // How fast to bob
 
-        // Sine wave swings between -1 and 1 over time
+        // Mathf.Sin swings between -1 and 1 over time. Why multiply by Time.deltaTime too?
         float newY = transform.position.y + Mathf.Sin(Time.time * bobSpeed) * bobAmount * Time.deltaTime;
 
-        // Update only the Y position, keep X and Z the same
-        transform.position = new Vector3(transform.position.x, newY, transform.position.z);
-    }
-
-    // ---------- Food type ----------
-
-    private void Start()
-    {
-        // Tint the pellet by food type (could also change size or effects)
-        switch (foodType)
-        {
-            case FoodType.Normal:
-                GetComponent<SpriteRenderer>().color = Color.blue;
-                break;
-            case FoodType.Super:
-                // Change color to indicate super food
-                GetComponent<SpriteRenderer>().color = Color.orange;
-                break;
-            case FoodType.Poison:
-                // Change color to indicate poison food
-                GetComponent<SpriteRenderer>().color = Color.green;
-                break;
-        }
-    }
-
-    public FoodType GetFoodType()
-    {
-        return foodType;
-    }
-
-    public void SetFoodType(FoodType type)
-    {
-        foodType = type;
-
-        // Update visual appearance based on food type
-        switch (foodType)
-        {
-            case FoodType.Normal:
-                GetComponent<SpriteRenderer>().color = Color.blue;
-                break;
-            case FoodType.Super:
-                GetComponent<SpriteRenderer>().color = Color.orange;
-                break;
-            case FoodType.Poison:
-                GetComponent<SpriteRenderer>().color = Color.green;
-                break;
-        }
+        transform.position = new Vector3(transform.position.x, newY, transform.position.z); // Change Y only
     }
 }

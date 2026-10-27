@@ -2,7 +2,8 @@
 
 **GAME 220: Core Programming -- Slither Game**
 
-The scripts in `Assets/Scripts/` keep their comments short so you can find the code.
+The scripts in `Assets/Scripts/` keep their comments brief so you can find the code: a short
+review where a concept first appears, and `// Why...?` questions for you to work out.
 This document holds the longer explanations. Each script's header names the section here
 that goes with it. Search a script for the method name given here to find the code.
 
@@ -91,7 +92,7 @@ in one piece at the screen edge.
 ### What the pellet does
 
 When a snake (player or AI) touches the food:
-1. The snake grows longer.
+1. The snake grows longer by `growthAmount` (1 by default).
 2. The score goes up (player only).
 3. The pellet is destroyed and a new one spawns somewhere else.
 
@@ -416,9 +417,12 @@ That shows how one pattern can be reused in a different situation.
 These match the one-line `// TRY IT` comments in the scripts.
 
 **FoodPellet: `growthAmount`**
-1. Set `growthAmount = 5`. One food adds 5 segments.
-2. Set `growthAmount = 0`. Food gives score but no growth ("diet mode").
-3. Challenge: make a rare "super food" with `growthAmount = 10`. (Hint: change `FoodSpawner`.)
+
+`growthAmount` sets how much any snake grows from one pellet.
+1. Set `growthAmount = 5` on the FoodPellet prefab. Eat a few. How fast does `bodySegments.Count` climb?
+2. Set `growthAmount = 0`. The pellet still disappears and the score still goes up. Why?
+3. Challenge: every pellet is the same right now. What would one pellet need to know so it could
+   behave differently from another? (This is where the summative's 50-point food starts.)
 
 **GameManager: `numberOfAISnakes`**
 1. `0`: no opponents.

@@ -113,6 +113,23 @@ Assets/
 
 ---
 
+## 🤖 AI Tutor (Google Antigravity)
+
+VS Code recommends the **Google Antigravity** extension when students open the project
+(`.vscode/extensions.json`). It runs in **tutor mode**:
+[`.agents/rules/tutor-mode.md`](.agents/rules/tutor-mode.md) (with [`AGENTS.md`](AGENTS.md) as a
+pointer for other AI tools) tells it to guide with hints and questions rather than write code.
+It won't write students' new food types or power-ups, their AI behaviors (boundary avoidance,
+a second AI type), or the extension features below, and it won't answer the `// Why...?`
+questions in the scripts. Copilot and VS Code's inline suggestions are turned off in
+`.vscode/settings.json`. Students sign in by following [AI_TUTOR.md](AI_TUTOR.md); in-panel
+sign-in is currently broken, so it uses PowerShell instead.
+
+**Check it before class:** open VS Code, sign in, and ask the tutor to "write the code for a new
+food type worth 50 points." It should decline and offer a hint.
+
+---
+
 ## 🎓 For Teachers
 
 ### Session-by-Session Guide
@@ -168,8 +185,10 @@ Assets/
 1. Read `SETUP_INSTRUCTIONS.md` first
 2. Once scene works, explore scripts in session order
 3. **Read each script's header**, then the matching section of `LOOPS_AND_LISTS_CONCEPTS.md` for the WHY and HOW
-4. Experiment with Inspector values
-5. Try the extension ideas below
+4. Answer the `// Why...?` questions in the scripts for yourself
+5. Experiment with Inspector values
+6. Try the extension ideas below
+7. **Set up your AI tutor:** follow [AI_TUTOR.md](AI_TUTOR.md) to sign in to Google Antigravity in VS Code. It gives hints and asks questions; it won't write your features for you.
 
 ### Understanding the Code
 
@@ -274,7 +293,8 @@ See **[SETUP_INSTRUCTIONS.md](SETUP_INSTRUCTIONS.md)** for detailed troubleshoot
 - **Full Teaching Guide:** `Assets/Scripts/README.md`
 - **Setup Instructions:** `SETUP_INSTRUCTIONS.md`
 - **Concepts Reference:** `LOOPS_AND_LISTS_CONCEPTS.md` (the long explanations, diagrams, and TRY IT experiments)
-- **Inline Comments:** short one-line pointers; each script's header names its concepts section
+- **Inline Comments:** labeled sections, short concept reviews, and `// Why...?` questions to think about; each script's header names its concepts section
+- **AI Tutor Setup:** `AI_TUTOR.md` (students sign in to the VS Code tutor here)
 
 ### Unity Concepts Used
 - 2D Sprite Rendering
@@ -310,7 +330,7 @@ Students should always have working code. Each session adds functionality withou
 Implement the simplest version that works. No over-engineering. Focus on core concepts.
 
 **"Read, Repeat, Understand"**
-Scripts keep short one-line comments so students can find the code; `LOOPS_AND_LISTS_CONCEPTS.md` explains WHY and HOW. Students read first, then implement similar patterns.
+Scripts keep comments to about a quarter of the lines, so students can find the code and still have something to think about: short reviews where a concept first appears and `// Why...?` questions at the line where a decision is made. `LOOPS_AND_LISTS_CONCEPTS.md` explains WHY and HOW at length. Students read first, then implement similar patterns.
 
 **"Loops and Lists First"**
 Every system demonstrates practical loop usage and list management. This is the lens through which we teach.

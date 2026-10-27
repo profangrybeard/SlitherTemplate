@@ -1,61 +1,64 @@
 /*
  * GAME 220: Slither Template -- BoundsHelper (STATIC CLASS)
  * Shared play-area edges plus helpers to check, wrap, clamp, and pick random positions.
- * Concepts: LOOPS_AND_LISTS_CONCEPTS.md section 6 -- static classes, wrapping vs clamping, Mathf helpers
+ * The snakes, FoodSpawner, and GameManager all call it, so the edges live in one place.
  *
+ * Read alongside: LOOPS_AND_LISTS_CONCEPTS.md section 6
  * Session 5: read WrapPosition(), then try the wrap/clamp experiment (section 9)
  */
 
 using UnityEngine;
 
-// static: never instantiated or attached; call BoundsHelper.Method() directly
+// STATIC: a static class is never attached to a GameObject and never created with `new`.
+//   You call its methods on the class name itself:
+//       transform.position = BoundsHelper.WrapPosition(transform.position);
+//   That's why it isn't a MonoBehaviour, and why it has no Start() or Update().
 public static class BoundsHelper
 {
-    // ---------- Play area edges (static = shared by every script) ----------
+    // ─────────────────────────────────────────────────────────────────────────
+    // PLAY AREA EDGES - static, so every script shares the same values
+    // ─────────────────────────────────────────────────────────────────────────
 
-    // Bounds sized to match a camera with orthographic size 10 (16:9 aspect)
-    // This keeps all game action visible on screen
+    // Sized to match a camera with orthographic size 10 (16:9 aspect), so all the action stays on screen
     public static Vector2 minBounds = new Vector2(-17, -10);
     public static Vector2 maxBounds = new Vector2(17, 10);
 
-    // ---------- Bounds check ----------
+    // ─────────────────────────────────────────────────────────────────────────
+    // BOUNDS CHECK
+    // ─────────────────────────────────────────────────────────────────────────
 
-    // true if the position is inside on all four sides
+    // true if the position is inside on all four sides. Why && and not ||?
     public static bool IsInBounds(Vector3 position)
     {
         return position.x >= minBounds.x && position.x <= maxBounds.x &&
                position.y >= minBounds.y && position.y <= maxBounds.y;
     }
 
-    // ---------- Wrapping (Pac-Man style) ----------
+    // ─────────────────────────────────────────────────────────────────────────
+    // WRAPPING - Pac-Man style
+    // ─────────────────────────────────────────────────────────────────────────
 
     // TRY IT: steer off each edge, then swap in ClampPosition (see section 9)
     public static Vector3 WrapPosition(Vector3 position)
     {
-        // Start with the current position
-        Vector3 wrappedPosition = position;
+        Vector3 wrappedPosition = position;      // Start with the current position
 
-        // Horizontal edges
-
-        // Too far LEFT? Teleport to RIGHT edge
+        // Too far LEFT? Teleport to the RIGHT edge. Too far RIGHT? Teleport to the LEFT edge.
         if (position.x < minBounds.x)
         {
             wrappedPosition.x = maxBounds.x;
         }
-        // Too far RIGHT? Teleport to LEFT edge
         else if (position.x > maxBounds.x)
         {
             wrappedPosition.x = minBounds.x;
         }
 
-        // Vertical edges
-
-        // Too far DOWN? Teleport to TOP edge
+        // Too far DOWN? Teleport to the TOP. Too far UP? Teleport to the BOTTOM.
+        // Why is this a new `if`, not one more `else if` on the chain above? Think about a corner.
         if (position.y < minBounds.y)
         {
             wrappedPosition.y = maxBounds.y;
         }
-        // Too far UP? Teleport to BOTTOM edge
         else if (position.y > maxBounds.y)
         {
             wrappedPosition.y = minBounds.y;
@@ -64,7 +67,9 @@ public static class BoundsHelper
         return wrappedPosition;
     }
 
-    // ---------- Clamping (stop at the wall) ----------
+    // ─────────────────────────────────────────────────────────────────────────
+    // CLAMPING - Stop at the wall
+    // ─────────────────────────────────────────────────────────────────────────
 
     // Mathf.Clamp(value, min, max) forces each axis into the range
     public static Vector3 ClampPosition(Vector3 position)
@@ -76,7 +81,9 @@ public static class BoundsHelper
         );
     }
 
-    // ---------- Random positions ----------
+    // ─────────────────────────────────────────────────────────────────────────
+    // RANDOM POSITIONS
+    // ─────────────────────────────────────────────────────────────────────────
 
     // Random point anywhere in the play area (float Random.Range includes both ends)
     public static Vector3 GetRandomPosition()
@@ -103,19 +110,19 @@ public static class BoundsHelper
         );
     }
 
-    // ---------- Distance and size ----------
+    // ─────────────────────────────────────────────────────────────────────────
+    // DISTANCE AND SIZE
+    // ─────────────────────────────────────────────────────────────────────────
 
-    // Distance to the nearest edge (useful for AI edge avoidance)
+    // Distance to the nearest edge (useful for AI edge avoidance). Nothing calls it yet.
     public static float GetDistanceToBounds(Vector3 position)
     {
-        // Calculate distance to each edge
         float distanceToLeft = position.x - minBounds.x;
         float distanceToRight = maxBounds.x - position.x;
         float distanceToBottom = position.y - minBounds.y;
         float distanceToTop = maxBounds.y - position.y;
 
-        // Smallest of the four
-        return Mathf.Min(
+        return Mathf.Min(                        // The smallest of the four
             distanceToLeft,
             distanceToRight,
             distanceToBottom,
