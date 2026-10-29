@@ -315,9 +315,13 @@ This is an educational template for GAME 220. Suggestions welcome:
 
 ---
 
-## 📄 License
+## License
 
-See [LICENSE](LICENSE) file.
+The code in this project is MIT licensed. See [LICENSE](LICENSE).
+
+Written guides and original art by Tim Lindsey are licensed [CC BY-NC-SA 4.0](LICENSE-docs). You can share and adapt them for non-commercial use, with credit, under the same license.
+
+Third-party assets keep their own licenses.
 
 ---
 
